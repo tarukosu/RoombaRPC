@@ -7,7 +7,7 @@
 ```
 $ apt install python-dev
 $ pip install pyserial
-$ pip install mprpc
+$ pip install zerorpc
 ```
 
 # setup

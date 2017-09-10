@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=360,initial-scale=1">
+        <script src="http://threejs.org/build/three.min.js"></script>
+        <script src="http://jeromeetienne.github.io/threex.keyboardstate/threex.keyboardstate.js"></script>
+        <script src="bower_components/virtualjoystick.js/virtualjoystick.js"></script> 
+        <script src="/socket.io/socket.io.js"></script>
+    </head>
+    <title>Control Roomba</title>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
+    <body>
+        <div id="help" style="position:fixed; left:40%; top:4%; color:grey;">
+            Roomba Joystick Controller
+        </div>
+    
+        <div id="debug1" style="position:fixed; left:5%; top:4%; color:grey;">
+            Debug Info 
+        </div>
+    
+        <div id="debug2" style="position:fixed; left:5%; top:8%; color:grey;">
+            Debug Info 
+        </div>
+    
+
+        <script>
+            //var socket = io.connect('http://localhost:3000');
+            var socket = io();
+
+            var scene = new THREE.Scene();
+            var clock = new THREE.Clock();
+            
+            var keyboard = new THREEx.KeyboardState();
+            var joystick = new VirtualJoystick({
+                mouseSupport	: true,
+                limitStickTravel: true,
+                stickRadius	: 100
+            });
+            
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            var debugText1 = document.getElementById("debug1");
+            var debugText2 = document.getElementById("debug2");
+            
+            animate();
+            function animate(){
+                requestAnimationFrame(animate);
+                frameTime = clock.getDelta();
+
+                var x = joystick.deltaX();
+                var y = joystick.deltaY();
+                
+                if( keyboard.pressed("D") ){
+                    x = 100;
+                }
+                if( keyboard.pressed("A") ){
+                    x = -100;
+                }
+                if( keyboard.pressed("W") ){
+                    y = -100;
+                }
+                if( keyboard.pressed("S") ){
+                    y = 100;
+                }
+                
+                if(Math.abs(x) > Math.abs(y)){
+                    y = 0;
+                }else{
+                    x = 0;
+                }
+                debugText1.innerHTML = "X: " + x;
+                debugText2.innerHTML = "Y: " + y;
+
+                socket.emit('moveTo', {x: -y/100, y: -x/100});
+            }
+            function onWindowResize(){
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize( window.innerWidth, window.innerHeight );   
+            }
+
+            
+            socket.on('news', function (data) {
+                console.log(data);
+                socket.emit('my other event', { my: 'data' });
+            });
+        </script>
+    </body>
+</html>
