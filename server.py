@@ -25,6 +25,11 @@ class RoombaRPC(object):
         print("move: %f, %f" % (x, theta))
         self.robot.go(x, theta)
         self.moving = True
+
+    def moveTo(self, x, theta):
+        max_x = 20 # max: 500 mm/s
+        max_theta = 40 # max: 2000 mm
+        self.move(x * max_x, theta * max_theta)
                 
     
 if __name__=='__main__':
