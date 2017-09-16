@@ -9,7 +9,6 @@ class RoombaRPC(object):
         self.moving = False
         self.pause()
 
-
     def __del__(self):
         self.robot.close()
 
@@ -27,8 +26,8 @@ class RoombaRPC(object):
         self.moving = True
 
     def moveTo(self, x, theta):
-        max_x = 20 # max: 500 mm/s
-        max_theta = 40 # max: 2000 mm
+        max_x = 20 # cm/s
+        max_theta = 40 # deg/s
         self.move(x * max_x, theta * max_theta)
                 
     
