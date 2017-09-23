@@ -5,7 +5,6 @@
         <script src="http://threejs.org/build/three.min.js"></script>
         <script src="http://jeromeetienne.github.io/threex.keyboardstate/threex.keyboardstate.js"></script>
         <script src="bower_components/virtualjoystick.js/virtualjoystick.js"></script> 
-        <script src="/socket.io/socket.io.js"></script>
     </head>
     <title>Control Roomba</title>
     <style>
@@ -30,10 +29,19 @@
     
 
         <script>
-            //var socket = io.connect('http://localhost:3000');
-            var socket = io();
+            var ws = new WebSocket('ws://localhost:3000/websocket')
+            var wsOpen = false;
 
-            var scene = new THREE.Scene();
+            ws.onopen = function () {
+                console.log("connected");
+                wsOpen = true;
+            };
+
+            ws.onclose = function (){
+                wsOpen = false;
+            }
+
+             var scene = new THREE.Scene();
             var clock = new THREE.Clock();
             
             var keyboard = new THREEx.KeyboardState();
@@ -52,6 +60,8 @@
             
             animate();
             function animate(){
+                //console.log(wsOpen);
+                
                 requestAnimationFrame(animate);
                 frameTime = clock.getDelta();
 
@@ -79,19 +89,19 @@
                 debugText1.innerHTML = "X: " + x;
                 debugText2.innerHTML = "Y: " + y;
 
-                socket.emit('moveTo', {x: -y/100, y: -x/100});
+                if(wsOpen){
+                    ws.send(JSON.stringify({
+                        'type': 'moveTo', 
+                        'data': {x: -y/100, y: -x/100}
+                    }));
+                }
             }
+
             function onWindowResize(){
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize( window.innerWidth, window.innerHeight );   
             }
-
-            
-            socket.on('news', function (data) {
-                console.log(data);
-                socket.emit('my other event', { my: 'data' });
-            });
         </script>
     </body>
 </html>

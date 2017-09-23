@@ -1,7 +1,9 @@
 var express = require("express");
 var app = express();
+var url = require('url');
 var http = require('http').Server(app);
-var io = require('socket.io')(http);
+//var io = require('socket.io')(http);
+var WebSocket = require('ws');
 
 var zerorpc = require("zerorpc");
 
@@ -24,32 +26,29 @@ var server = http.listen(3000, function(){
     console.log("Node.js is listening to PORT:" + server.address().port);
 });
 
-var latest_user_socket_id = "";
-
-io.on('connection', function (socket) {
-
-    if(io.sockets.sockets[latest_user_socket_id]){
-        io.sockets.sockets[latest_user_socket_id].disconnect();
-        console.log("disconnect: " + latest_user_socket_id)
-    }
-    //var user_socket_id = socket.id;
-    latest_user_socket_id = socket.id
-    console.log(latest_user_socket_id);
-
-    client.invoke("toSafeMode")
-    /*
-    socket.emit('news', { hello: 'world' });
-    socket.on('my other event', function (data) {
-      console.log(data);
-    });
-    */
-
-    socket.on('moveTo', function (data) {
-        //console.log(data.x);
-        
-        client.invoke("moveTo", data.x, data.y, function(error, res, more) {
-            //console.log(res);
-        });
-    });
+var wss = new WebSocket.Server({
+    server: server,
+    clientTracking: true
 });
 
+
+wss.on('connection', function connection(ws, req) {
+    // disconnect old clients
+    wss.clients.forEach(function each(client){
+        if(client !== ws){
+            client.terminate();
+            console.log("disconnect");
+        }
+    });
+  
+    ws.on('message', function incoming(message) {
+        console.log('received: %s', message);
+        data = JSON.parse(message);
+        //console.log(json);
+        switch(data.type){
+            case 'moveTo':
+                client.invoke("moveTo", data.data.x, data.data.y, function(error, res, more) {});
+                break;
+        }
+    });
+});
