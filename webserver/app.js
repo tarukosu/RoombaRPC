@@ -40,14 +40,19 @@ wss.on('connection', function connection(ws, req) {
             console.log("disconnect");
         }
     });
+
+    client.invoke("toSafeMode");
   
     ws.on('message', function incoming(message) {
         console.log('received: %s', message);
         data = JSON.parse(message);
-        //console.log(json);
+        console.log(data.type);
         switch(data.type){
-            case 'moveTo':
-                client.invoke("moveTo", data.data.x, data.data.y, function(error, res, more) {});
+            case 'moveToward':
+                client.invoke("moveToward", data.data.x, data.data.y, function(error, res, more) {});
+                break;
+      	case 'move':
+                client.invoke("move", data.data.x, data.data.y, function(error, res, more) {});
                 break;
         }
     });

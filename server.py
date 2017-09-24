@@ -13,6 +13,7 @@ class RoombaRPC(object):
         self.robot.close()
 
     def toSafeMode(self):
+        print("to safe mode")
         self.robot.toSafeMode()
 
     def pause(self):
@@ -21,15 +22,15 @@ class RoombaRPC(object):
             self.moving = False
         
     def move(self, x, theta):
-        print("move: %f, %f" % (x, theta))
-        self.robot.go(x, theta)
+        print("move: %f[m/s], %f[deg/s]" % (x, theta))
+        self.robot.go(x * 100, theta)
         self.moving = True
 
-    def moveTo(self, x, theta):
-        max_x = 20 # cm/s
+    def moveToward(self, x, theta):
+        max_x = 0.2 # m/s
         max_theta = 40 # deg/s
         self.move(x * max_x, theta * max_theta)
-                
+
     
 if __name__=='__main__':
     RPC_PORT = 6000

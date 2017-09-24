@@ -29,7 +29,7 @@
     
 
         <script>
-            var ws = new WebSocket('ws://localhost:3000/websocket')
+            var ws = new WebSocket('ws://192.168.0.13:3000/websocket')
             var wsOpen = false;
 
             ws.onopen = function () {
@@ -91,7 +91,7 @@
 
                 if(wsOpen){
                     ws.send(JSON.stringify({
-                        'type': 'moveTo', 
+                        'type': 'moveToward',
                         'data': {x: -y/100, y: -x/100}
                     }));
                 }
