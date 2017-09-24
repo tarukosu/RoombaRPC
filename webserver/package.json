@@ -10,7 +10,6 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.15.4",
-    "socket.io": "^2.0.3",
     "ws": "^3.2.0",
     "zerorpc": "^0.9.7"
   }

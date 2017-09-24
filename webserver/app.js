@@ -2,9 +2,7 @@ var express = require("express");
 var app = express();
 var url = require('url');
 var http = require('http').Server(app);
-//var io = require('socket.io')(http);
 var WebSocket = require('ws');
-
 var zerorpc = require("zerorpc");
 
 var client = new zerorpc.Client();
@@ -14,8 +12,6 @@ client.on("error", function(error) {
     console.error("RPC client error:", error);
 });
 
-
-//app.use(express.static('public'));
 app.use(express.static(__dirname));
 
 app.get(`/`, (req, res) => {

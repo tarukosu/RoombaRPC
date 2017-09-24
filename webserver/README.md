@@ -1,16 +1,13 @@
-```
-$ cd public
-$ bower install virtualjoystick.js
-```
-https://github.com/jeromeetienne/virtualjoystick.js
-
 # setup
 
 ```
+$ sudo apt install libzmq-dev
 $ npm install
 $ npm -g install bower
-$ bower install
+$ bower install virtualjoystick.js
 ```
+
+https://github.com/jeromeetienne/virtualjoystick.js
 
 # start app
 ```
